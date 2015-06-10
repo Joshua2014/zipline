@@ -323,7 +323,6 @@ class PerformanceTracker(object):
 
         self.all_benchmark_returns[midnight] = event.returns
 
-<<<<<<< HEAD
     def process_close_position(self, event):
 
         # CLOSE_POSITION events contain prices that must be handled as a final

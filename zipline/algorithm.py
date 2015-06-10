@@ -511,6 +511,7 @@ class TradingAlgorithm(object):
                 self.sim_params.sids,
                 self.sim_params.first_open,
                 self.sim_params.data_frequency,
+                self.sim_params.last_close,
             )
 
         with ZiplineAPI(self):
@@ -1066,6 +1067,7 @@ class TradingAlgorithm(object):
                     self.current_universe(),
                     self.sim_params.first_open,
                     self.sim_params.data_frequency,
+                    self.sim_params.last_close,
                 )
 
     def get_history_spec(self, bar_count, frequency, field, ffill,
@@ -1093,6 +1095,7 @@ class TradingAlgorithm(object):
                     self.current_universe(),
                     self.datetime,
                     self.sim_params.data_frequency,
+                    self.sim_params.last_close,
                     bar_data=self._most_recent_data,
                 )
 
