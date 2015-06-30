@@ -581,6 +581,7 @@ class AssetFinderTestCase(TestCase):
 
     def test_lookup_future_chain(self):
         metadata = {
+            # Expires today, so should be valid
             2: {
                 'symbol': 'ADN15',
                 'root_symbol': 'AD',
@@ -601,7 +602,7 @@ class AssetFinderTestCase(TestCase):
                 'root_symbol': 'AD',
                 'asset_type': 'future',
                 'expiration_date': pd.Timestamp('2015-12-14', tz='UTC'),
-                'start_date': pd.Timestamp('2015-06-19', tz='UTC')
+                'start_date': pd.Timestamp('2015-06-15', tz='UTC')
             },
             # Copy of the above future, but starts trading in August,
             # so it isn't valid.
@@ -616,17 +617,17 @@ class AssetFinderTestCase(TestCase):
         }
 
         finder = AssetFinder(metadata=metadata)
-        dt = pd.Timestamp('2015-06-19', tz='UTC')
+        dt = pd.Timestamp('2015-06-15', tz='UTC')
 
-        # Check that we get the expected number of contract, in the
+        # Check that we get the expected number of contracts, in the
         # right order
-        ad_contracts = finder.lookup_future_chain('AD', dt)
-        self.assertEqual(len(ad_contracts), 2)
-        self.assertEqual(ad_contracts[0].sid, 1)
-        self.assertEqual(ad_contracts[1].sid, 0)
+        ad_contracts = finder.lookup_future_chain('AD', dt, dt)
+        self.assertEqual(len(ad_contracts), 3)
+        self.assertEqual(ad_contracts[0].sid, 2)
+        self.assertEqual(ad_contracts[1].sid, 1)
+        self.assertEqual(ad_contracts[2].sid, 0)
 
     def test_map_identifier_index_to_sids(self):
-
         # Build an empty finder and some Assets
         dt = pd.Timestamp('2014-01-01', tz='UTC')
         finder = AssetFinder()

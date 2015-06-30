@@ -238,7 +238,7 @@ class AssetFinder(object):
         """
         try:
             return [c for c in self.future_chains_cache[root_symbol]
-                    if c.expiration_date and (c.expiration_date > as_of_date)
+                    if c.expiration_date and (as_of_date <= c.expiration_date)
                     and c.start_date and (c.start_date <= as_of_date)]
         except KeyError:
             return None
