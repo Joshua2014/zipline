@@ -231,19 +231,36 @@ class AssetFinder(object):
         for root_symbol in self.future_chains_cache:
             self.future_chains_cache[root_symbol].sort(key=exp_key)
 
-    def _valid_contracts(self, root_symbol, as_of_date):
+    def _valid_contracts(self, root_symbol, as_of_date, knowledge_date):
         """ Returns  a list of the currently valid futures contracts
         for a given root symbol, sorted by expiration date (the
         contracts are sorted when the AssetFinder is built).
+
+        Parameters
+        ----------
+        root_symbol : str
+            Root symbol of the desired future.
+        as_of_date : pd.Timestamp
+            Date at which the chain determination is rooted. I.e. the
+            existing contract that expires first after (or on) this date is
+            the primary contract, etc.
+        knowledge_date : pd.Timestamp
+            Date for determining which contracts exist for inclusion in
+            this chain. Contracts exist only if they have a start_date
+            on or before this date.
+
+        Returns
+        -------
+        [Future]
         """
         try:
             return [c for c in self.future_chains_cache[root_symbol]
                     if c.expiration_date and (as_of_date <= c.expiration_date)
-                    and c.start_date and (c.start_date <= as_of_date)]
+                    and c.start_date and (c.start_date <= knowledge_date)]
         except KeyError:
             return None
 
-    def lookup_future_chain(self, root_symbol, as_of_date):
+    def lookup_future_chain(self, root_symbol, as_of_date, knowledge_date):
         """ Return the futures chain for a given root symbol.
 
         Parameters
@@ -251,7 +268,13 @@ class AssetFinder(object):
         root_symbol : str
             Root symbol of the desired future.
         as_of_date : pd.Timestamp
-            Date at the time of the lookup.
+            Date at which the chain determination is rooted. I.e. the
+            existing contract that expires first after (or on) this date is
+            the primary contract, etc.
+        knowledge_date : pd.Timestamp
+            Date for determining which contracts exist for inclusion in
+            this chain. Contracts exist only if they have a start_date
+            on or before this date.
 
         Returns
         -------
@@ -259,7 +282,7 @@ class AssetFinder(object):
         """
         root_symbol.upper()
         as_of_date = normalize_date(as_of_date)
-        return self._valid_contracts(root_symbol, as_of_date)
+        return self._valid_contracts(root_symbol, as_of_date, knowledge_date)
 
     def populate_cache(self):
         """

@@ -618,6 +618,8 @@ class AssetFinderTestCase(TestCase):
 
         finder = AssetFinder(metadata=metadata)
         dt = pd.Timestamp('2015-06-15', tz='UTC')
+        last_year = pd.Timestamp('2014-01-01', tz='UTC')
+        first_day = pd.Timestamp('2015-01-01', tz='UTC')
 
         # Check that we get the expected number of contracts, in the
         # right order
@@ -626,6 +628,14 @@ class AssetFinderTestCase(TestCase):
         self.assertEqual(ad_contracts[0].sid, 2)
         self.assertEqual(ad_contracts[1].sid, 1)
         self.assertEqual(ad_contracts[2].sid, 0)
+
+        # Check that we get nothing if our knowledge date is last year
+        ad_contracts = finder.lookup_future_chain('AD', dt, last_year)
+        self.assertEqual(len(ad_contracts), 0)
+
+        # Check that we get things that start on the knowledge date
+        ad_contracts = finder.lookup_future_chain('AD', dt, first_day)
+        self.assertEqual(len(ad_contracts), 2)
 
     def test_map_identifier_index_to_sids(self):
         # Build an empty finder and some Assets
