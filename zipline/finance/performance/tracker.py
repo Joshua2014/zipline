@@ -333,7 +333,7 @@ class PerformanceTracker(object):
         if txn:
             self.process_transaction(txn)
 
-    def check_upcoming_dividends(self, midnight_of_date_that_just_ended, history_container):
+    def check_upcoming_dividends(self, next_trading_day, history_container):
         """
         Check if we currently own any stocks with dividends whose ex_date is
         the next trading day.  Track how much we should be payed on those
